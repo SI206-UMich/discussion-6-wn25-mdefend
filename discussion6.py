@@ -20,18 +20,13 @@ def load_csv(f):
     # use this 'full_path' variable as the file that you open
     fileop = open(full_path) 
     reader = csv.reader(fileop)
-    d = {}
-    headers = next(fileop)
+    headers = next(reader)
+    d = {headers[1] : {}, headers[2] : {}, headers[3] :{}}
     for row in reader:
-        inner = {}
         month = row[0]
-        data_1 = int(row[1])
-        data_2 = int(row[2])
-        data_3 = int(row[3])
-        inner[headers[0]] = data_1
-        inner[headers[2]] = data_2
-        inner[headers[3]] = data_3
-        d[month] = inner 
+        d[headers[1]][month] = row[1] 
+        d[headers[2]][month] = row[2]
+        d[headers[3]][month] = row[3]
     return d
 
 
@@ -49,7 +44,23 @@ def get_annual_max(d):
     Note: Don't strip or otherwise modify strings. Do not change datatypes except where necessary.
         You'll have to change vals to int to compare them. 
     '''
-    pass
+  
+    result = []
+
+    for year, months in d.items():
+        max_value = 0
+        max_month = ''
+
+        for month, value in months.items():
+            int_value = int(value)
+            if int_value > max_value:
+                max_value = int_value
+                max_month = month
+
+        result.append((year, max_month, max_value))
+
+    return result
+    
 
 def get_month_avg(d):
     '''
@@ -64,6 +75,7 @@ def get_month_avg(d):
         You'll have to make the vals int or float here and round the avg to pass tests.
     '''
     pass
+
 
 class dis7_test(unittest.TestCase):
     '''
@@ -85,6 +97,11 @@ class dis7_test(unittest.TestCase):
         self.assertAlmostEqual(self.month_avg_dict['2020'], 398, 0)
 
 def main():
+    print("----------------------------------------------------------------------")
+    flight_dict = load_csv('daily_visitors.csv')
+    print("Output of load_csv:", flight_dict, "\n")
+    print("Output of get_annual_max:", get_annual_max(flight_dict), "\n")
+    print("Output of get_month_avg:", get_month_avg(flight_dict), "\n")
     unittest.main(verbosity=2)
 
 if __name__ == '__main__':
